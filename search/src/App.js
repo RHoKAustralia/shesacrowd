@@ -47,6 +47,8 @@ function Search() {
 
 const ResultView = ({viewport, onViewportChange}) => {
     return <ReactMapGL
+        width="100%"
+        height="100%"
         {...viewport}
         onViewportChange={onViewportChange}
     >
@@ -58,37 +60,50 @@ const ResultView = ({viewport, onViewportChange}) => {
 class App extends Component {
     state = {
         viewport: {
-            width: 600,
-            height: 600,
-            latitude: -37.86056104964807, longitude: 144.93810500843276, zoom: 8.682758083187197
+            latitude: -37.86056104964807,
+            longitude: 144.93810500843276,
+            zoom: 8.682758083187197,
         }
     };
 
     render() {
         const onViewportChange = (viewport) => {
             console.log(viewport);
-            //this.setState({viewport});
-            if (viewport.zoom > 8.68) this.setState({viewport});
+            this.setState({viewport});
+            //if (viewport.zoom > 8.68) this.setState({viewport});
         };
 
-        return <div>
-            <InstantSearch
-                appId="664666TT3X"
-                apiKey="e16aa90f340ca104cb32b7d8c7e98e8c"
-                indexName="dev_incidents"
-            >
-                <Configure hitsPerPage={1000}/>
+        return (
+            <div className="section">
+                <div className="container">
+                    <InstantSearch
+                        appId="664666TT3X"
+                        apiKey="e16aa90f340ca104cb32b7d8c7e98e8c"
+                        indexName="dev_incidents"
+                        onSearchStateChange={console.log}
+                    >
+                        <Configure hitsPerPage={50}/>
 
-                <SearchBox/>
-                <RefinementList attribute="categories"/>
-                Age: <RangeInput attribute="age"/>
-                Gender: <RefinementList attribute="gender"/>
+                        <div className="columns">
+                            <div className="column">
+                                <SearchBox/>
+                            </div>
+                        </div>
 
-
-                <ResultView viewport={this.state.viewport} onViewportChange={onViewportChange}/>
-            </InstantSearch>
-
-        </div>
+                        <div className="columns">
+                            <div className="column is-one-quarter">
+                                <RefinementList attribute="categories"/>
+                                Age: <RangeInput attribute="age"/>
+                                Gender: <RefinementList attribute="gender"/>
+                            </div>
+                            <div className="column" style={{height: 450}}>
+                                <ResultView viewport={this.state.viewport} onViewportChange={onViewportChange}/>
+                            </div>
+                        </div>
+                    </InstantSearch>
+                </div>
+            </div>
+        )
     }
 }
 
