@@ -27,13 +27,7 @@ function IncidentPin({hit}) {
 
     return (
         <Marker latitude={hit._geoloc.lat} longitude={hit._geoloc.lng} offsetLeft={-20} offsetTop={-10}>
-            <svg
-                height={size}
-                viewBox="0 0 24 24"
-                style={{...pinStyle, transform: `translate(${-size / 2}px,${-size}px)`}}
-            >
-                <path d={ICON}/>
-            </svg>
+            <img src="/pin.png" width={12} height={12}/>
         </Marker>
     )
 };
