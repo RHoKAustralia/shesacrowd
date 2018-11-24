@@ -38,15 +38,6 @@ function IncidentPin({hit}) {
     )
 };
 
-function Search() {
-    return (
-        <div className="container">
-            <SearchBox/>
-            <Hits hitComponent={IncidentPin}/>
-        </div>
-    );
-}
-
 const ResultView = ({viewport, onViewportChange}) => {
     return <ReactMapGL
         width="100%"
@@ -82,10 +73,9 @@ class App extends Component {
                     <InstantSearch
                         appId="664666TT3X"
                         apiKey="e16aa90f340ca104cb32b7d8c7e98e8c"
-                        indexName="dev_incidents"
-                        onSearchStateChange={console.log}
+                        indexName="dev_melbourne"
                     >
-                        <Configure hitsPerPage={50}/>
+                        <Configure hitsPerPage={1000}/>
 
                         <div className="columns">
                             <div className="column">
