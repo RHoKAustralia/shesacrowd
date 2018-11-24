@@ -19,7 +19,7 @@ async function process() {
     const rawData = await csvtojsonV2().fromFile(filename);
 
     const processed = rawData.map(i => {
-        return {
+        return (i.Latitude && i.Longitude) ? {
             objectID: `incidents-${i.Id}`,
             gender: validateTag(i.Gender, ['Male', 'Female']),
             age: parseInt(i.Age),
@@ -29,11 +29,13 @@ async function process() {
                 i.Motivation.split(', ').map(normalize)
             ).filter(v => ['', '0'].indexOf(v) == -1),
             aftermath: i.Aftermath.split(', ').map(normalize),
-            lat: parseFloat(i.Latitude),
-            lng: parseFloat(i.Longitude),
+            "_geoloc": {
+                lat: parseFloat(i.Latitude),
+                lng: parseFloat(i.Longitude),
+            },
             description: i.Description
-        }
-    });
+        } : null;
+    }).filter(x => x);
 
     console.log(JSON.stringify(processed, null, 2));
 }

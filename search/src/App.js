@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import ReactDOM from 'react-dom';
 import {
-    InstantSearch, Hits, SearchBox, Configure, RefinementList, RangeInput
+    InstantSearch, Hits, SearchBox, Configure, RefinementList, RangeInput, MenuSelect
 } from 'react-instantsearch-dom';
 import ReactMapGL, {BaseControl, Marker} from 'react-map-gl';
 
@@ -19,12 +19,12 @@ function IncidentPin({hit}) {
 
     const size = 20;
 
-    if (!hit.lat || !hit.lng) {
+    if (!hit._geoloc.lat || !hit._geoloc.lng) {
         return null;
     }
 
     return (
-        <Marker latitude={hit.lat} longitude={hit.lng} offsetLeft={-20} offsetTop={-10}>
+        <Marker latitude={hit._geoloc.lat} longitude={hit._geoloc.lng} offsetLeft={-20} offsetTop={-10}>
             <svg
                 height={size}
                 viewBox="0 0 24 24"
@@ -92,13 +92,24 @@ class App extends Component {
 
                         <div className="columns">
                             <div className="column is-one-quarter">
-                                <RefinementList attribute="categories"/>
-                                Age: <RangeInput attribute="age"/>
-                                Gender: <RefinementList attribute="gender"/>
+                                <div className="box">
+                                    <RefinementList attribute="categories"/>
+                                </div>
+                                <div className="box">
+                                    <p>Age</p>
+                                    <RangeInput attribute="age"/>
+                                </div>
+                                <div className="box">
+                                    <p>Gender</p>
+                                    <RefinementList attribute="gender"/>
+                                </div>
+
                             </div>
+
                             <div className="column" style={{height: 450}}>
                                 <ResultView viewport={this.state.viewport} onViewportChange={onViewportChange}/>
                             </div>
+
                         </div>
                     </InstantSearch>
                 </div>
