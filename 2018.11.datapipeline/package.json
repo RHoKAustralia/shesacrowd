@@ -1,0 +1,22 @@
+{
+  "name": "shesacrowd-data",
+  "version": "1.0.0",
+  "description": "Data Preprocessor for She's A Crowd",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RHoKAustralia/shesacrowd.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/RHoKAustralia/shesacrowd/issues"
+  },
+  "homepage": "https://github.com/RHoKAustralia/shesacrowd#readme",
+  "dependencies": {
+    "csvtojson": "^2.0.8"
+  }
+}
