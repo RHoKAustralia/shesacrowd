@@ -92,18 +92,12 @@ class App extends Component {
 
                         <div className="columns">
                             <div className="column is-one-quarter">
-                                <div className="box">
-                                    <RefinementList attribute="categories"/>
-                                </div>
-                                <div className="box">
-                                    <p>Age</p>
-                                    <RangeInput attribute="age"/>
-                                </div>
-                                <div className="box">
-                                    <p>Gender</p>
-                                    <RefinementList attribute="gender"/>
-                                </div>
-
+                                <label className="label">Categories</label>
+                                <RefinementList attribute="categories"/>
+                                <label className="label">Age</label>
+                                <RangeInput attribute="age"/>
+                                <label className="label">Gender</label>
+                                <RefinementList attribute="gender"/>
                             </div>
 
                             <div className="column" style={{height: 450}}>
