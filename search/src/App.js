@@ -10,14 +10,6 @@ import './App.css';
 
 const mapboxApiAccessToken = 'pk.eyJ1IjoidGhvYWlvbmxpbmUiLCJhIjoiY2pvdjB3ZHVrMWZtejNwbnZxbm55ajFlNCJ9.d6smYka4raCk1wnLeFA8MQ'
 
-function truncate(string) {
-    const maxLength = 200;
-    if (string.length > maxLength)
-        return string.substring(0, maxLength) + '...';
-    else
-        return string;
-};
-
 class IncidentPin extends Component {
     constructor(props) {
         super(props);
@@ -37,11 +29,14 @@ class IncidentPin extends Component {
                 onClose={() => this.setState({showPopup: false})}
                 closeOnClick={true}
             >
-                <p className="is-size-7">{truncate(hit.description)}</p>
+                <p className="is-size-7">{hit.description}</p>
                 <label className="label">{hit.gender}</label>
-                {
-                    hit.categories.map(c => <span><span className="tag is-info">{c}</span><span>&nbsp;</span></span>)
-                }
+                <span className="tags">
+                    {
+                        hit.categories.map(c => <span
+                            className="tag is-info">{c}</span>)
+                    }
+                    </span>
             </Popup>
         ) : null;
 
