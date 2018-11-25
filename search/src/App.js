@@ -3,31 +3,70 @@ import ReactDOM from 'react-dom';
 import {
     InstantSearch, Hits, SearchBox, Configure, RefinementList, RangeInput, MenuSelect
 } from 'react-instantsearch-dom';
-import ReactMapGL, {BaseControl, Marker} from 'react-map-gl';
+
+import ReactMapGL, {Popup, Marker} from 'react-map-gl';
 
 import './App.css';
 
 const mapboxApiAccessToken = 'pk.eyJ1IjoidGhvYWlvbmxpbmUiLCJhIjoiY2pvdjB3ZHVrMWZtejNwbnZxbm55ajFlNCJ9.d6smYka4raCk1wnLeFA8MQ'
 
-function IncidentPin({hit}) {
-    const ICON = `M20.2,15.7L20.2,15.7c1.1-1.6,1.8-3.6,1.8-5.7c0-5.6-4.5-10-10-10S2,4.5,2,10c0,2,0.6,3.9,1.6,5.4c0,0.1,0.1,0.2,0.2,0.3
-  c0,0,0.1,0.1,0.1,0.2c0.2,0.3,0.4,0.6,0.7,0.9c2.6,3.1,7.4,7.6,7.4,7.6s4.8-4.5,7.4-7.5c0.2-0.3,0.5-0.6,0.7-0.9
-  C20.1,15.8,20.2,15.8,20.2,15.7z`;
+function truncate(string) {
+    const maxLength = 200;
+    if (string.length > maxLength)
+        return string.substring(0, maxLength) + '...';
+    else
+        return string;
+};
 
-    const pinStyle = {
-        fill: '#d00',
-        stroke: 'none'
-    };
+class IncidentPin extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {showPopup: false}
+    }
 
-    const size = 20;
+    render() {
+        let {hit} = this.props;
+        if (!hit._geoloc.lat || !hit._geoloc.lng) {
+            return null;
+        }
 
+        let popup = this.state.showPopup ? (
+            <Popup
+                latitude={hit._geoloc.lat}
+                longitude={hit._geoloc.lng}
+                onClose={() => this.setState({showPopup: false})}
+                closeOnClick={true}
+            >
+                <p className="is-size-7">{truncate(hit.description)}</p>
+                <label className="label">{hit.gender}</label>
+                {
+                    hit.categories.map(c => <span><span className="tag is-info">{c}</span><span>&nbsp;</span></span>)
+                }
+            </Popup>
+        ) : null;
+
+        return (
+            <div>
+                <Marker latitude={hit._geoloc.lat} longitude={hit._geoloc.lng} offsetLeft={-20} offsetTop={-10}>
+                    <img src="/pin.png" className="incident-pin" onClick={() => {
+                        let {showPopup} = this.state
+                        this.setState({showPopup: !showPopup});
+                    }}/>
+                </Marker>
+                {popup}
+            </div>
+        )
+    }
+}
+
+function _IncidentPin({hit}) {
     if (!hit._geoloc.lat || !hit._geoloc.lng) {
         return null;
     }
 
     return (
         <Marker latitude={hit._geoloc.lat} longitude={hit._geoloc.lng} offsetLeft={-20} offsetTop={-10}>
-            <img src="/pin.png" width={12} height={12}/>
+            <img src="/pin.png" className="incident-pin"/>
         </Marker>
     )
 };
@@ -56,7 +95,6 @@ class App extends Component {
 
     render() {
         const onViewportChange = (viewport) => {
-            console.log(viewport);
             this.setState({viewport});
             //if (viewport.zoom > 8.68) this.setState({viewport});
         };
