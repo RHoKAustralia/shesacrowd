@@ -10,6 +10,9 @@ import './App.css';
 
 const mapboxApiAccessToken = 'pk.eyJ1IjoidGhvYWlvbmxpbmUiLCJhIjoiY2pvdjB3ZHVrMWZtejNwbnZxbm55ajFlNCJ9.d6smYka4raCk1wnLeFA8MQ'
 
+// Hmm, hackathon?
+var globalApp;
+
 class IncidentPin extends Component {
     constructor(props) {
         super(props);
@@ -22,51 +25,37 @@ class IncidentPin extends Component {
             return null;
         }
 
-        let popup = this.state.showPopup ? (
-            <Popup
-                latitude={hit._geoloc.lat}
-                longitude={hit._geoloc.lng}
-                onClose={() => this.setState({showPopup: false})}
-                closeOnClick={true}
-            >
-                <p className="is-size-7">{hit.description}</p>
-                <label className="label">{hit.gender}</label>
-                <span className="tags">
-                    {
-                        hit.categories.map(c => <span
-                            className="tag is-info">{c}</span>)
-                    }
-                    </span>
-            </Popup>
-        ) : null;
-
         return (
             <div>
                 <Marker latitude={hit._geoloc.lat} longitude={hit._geoloc.lng} offsetLeft={-20} offsetTop={-10}>
                     <img src="/pin.png" className="incident-pin" onClick={() => {
-                        let {showPopup} = this.state
-                        this.setState({showPopup: !showPopup});
+                        globalApp.setState({activeHit: hit});
                     }}/>
                 </Marker>
-                {popup}
             </div>
         )
     }
 }
 
-function _IncidentPin({hit}) {
-    if (!hit._geoloc.lat || !hit._geoloc.lng) {
-        return null;
-    }
+const ResultView = ({viewport, onViewportChange, activeHit}) => {
+    let hit = activeHit;
+    let popup = hit ? (
+        <Popup
+            latitude={hit._geoloc.lat}
+            longitude={hit._geoloc.lng}
+            onClose={() => globalApp.setState({activeHit: null})}
+            closeOnClick={true}
+        >
+            <span className="tags">
+                {
+                    hit.categories.map(c => <span
+                        className="tag is-info" key={`tag-${c}`}>{c}</span>)
+                }
+                <span className="tag is-primary" key={`gender-${hit.gender}`}>{hit.gender}</span>
+            </span>
+        </Popup>
+    ) : null;
 
-    return (
-        <Marker latitude={hit._geoloc.lat} longitude={hit._geoloc.lng} offsetLeft={-20} offsetTop={-10}>
-            <img src="/pin.png" className="incident-pin"/>
-        </Marker>
-    )
-};
-
-const ResultView = ({viewport, onViewportChange}) => {
     return <ReactMapGL
         width="100%"
         height="100%"
@@ -75,6 +64,7 @@ const ResultView = ({viewport, onViewportChange}) => {
         mapboxApiAccessToken={mapboxApiAccessToken}
     >
         <Hits hitComponent={IncidentPin}/>
+        {popup}
     </ReactMapGL>
 
 };
@@ -85,8 +75,14 @@ class App extends Component {
             latitude: -37.86056104964807,
             longitude: 144.93810500843276,
             zoom: 8.682758083187197,
-        }
+        },
+        activeHit: null,
     };
+
+    constructor(props) {
+        super(props);
+        globalApp = this;
+    }
 
     render() {
         const onViewportChange = (viewport) => {
@@ -121,7 +117,11 @@ class App extends Component {
                             </div>
 
                             <div className="column" style={{height: 450}}>
-                                <ResultView viewport={this.state.viewport} onViewportChange={onViewportChange}/>
+                                <ResultView
+                                    viewport={this.state.viewport}
+                                    onViewportChange={onViewportChange}
+                                    activeHit={this.state.activeHit}
+                                />
                             </div>
 
                         </div>
